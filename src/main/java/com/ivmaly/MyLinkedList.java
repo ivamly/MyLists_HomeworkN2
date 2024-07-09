@@ -29,21 +29,29 @@ public class MyLinkedList<T> implements MyList<T> {
     }
 
     public MyLinkedList(MyList<T> myList) {
-        for (int i = 0; i < myList.getSize(); i++) {
-            add(myList.get(i));
+        this();
+        if (myList != null) {
+            for (int i = 0; i < myList.getSize(); i++) {
+                add(myList.get(i));
+            }
         }
     }
 
     public MyLinkedList(Collection<? extends T> collection) {
-        for (T element : collection) {
-            add(element);
+        this();
+        if (collection != null) {
+            for (T element : collection) {
+                add(element);
+            }
         }
     }
 
     public MyLinkedList(T[] array) {
         this();
-        for (T element : array) {
-            add(element);
+        if (array != null) {
+            for (T element : array) {
+                add(element);
+            }
         }
     }
 
@@ -61,66 +69,60 @@ public class MyLinkedList<T> implements MyList<T> {
 
     @Override
     public void add(int index, T element) {
-        if (isValidIndex(index)) {
-            if (index == size) {
-                add(element);
-                return;
-            }
-            if (index == 0) {
-                Node<T> newNode = new Node<>(element, head, null);
-                if (head == null) {
-                    tail = newNode;
-                } else {
-                    head.prev = newNode;
-                }
-                head = newNode;
-                size++;
-            } else {
-                Node<T> nextNode = getNode(index);
-                Node<T> prevNode = nextNode.prev;
-                Node<T> newNode = new Node<>(element, nextNode, prevNode);
-                nextNode.prev = newNode;
-                if (prevNode == null) {
-                    head = newNode;
-                } else {
-                    prevNode.next = newNode;
-                }
-                size++;
-            }
-        } else {
+        if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
+
+        if (index == size) {
+            add(element);
+            return;
+        }
+
+        Node<T> nextNode = getNode(index);
+        Node<T> prevNode = nextNode.prev;
+        Node<T> newNode = new Node<>(element, nextNode, prevNode);
+        nextNode.prev = newNode;
+        if (prevNode == null) {
+            head = newNode;
+        } else {
+            prevNode.next = newNode;
+        }
+        size++;
     }
 
     @Override
     public void addAll(Collection<? extends T> c) {
-        for (T element : c) {
-            add(element);
+        if (c != null) {
+            for (T element : c) {
+                add(element);
+            }
         }
     }
 
     @Override
     public void addAll(MyList<? extends T> c) {
-        for (int i = 0; i < c.getSize(); i++) {
-            add(c.get(i));
+        if (c != null) {
+            for (int i = 0; i < c.getSize(); i++) {
+                add(c.get(i));
+            }
         }
     }
 
     @Override
     public void remove(int index) {
-        if (isValidIndex(index)) {
-            Node<T> nodeToRemove = getNode(index);
-            removeNode(nodeToRemove);
-        } else {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
+
+        Node<T> nodeToRemove = getNode(index);
+        removeNode(nodeToRemove);
     }
 
     @Override
     public void remove(T element) {
         Node<T> current = head;
         while (current != null) {
-            if (current.data.equals(element)) {
+            if (Objects.equals(current.data, element)) {
                 removeNode(current);
                 return;
             }
@@ -146,7 +148,6 @@ public class MyLinkedList<T> implements MyList<T> {
         }
 
         boolean wasSwap;
-
         do {
             wasSwap = false;
             Node<T> current = head;
@@ -162,32 +163,30 @@ public class MyLinkedList<T> implements MyList<T> {
         } while (wasSwap);
     }
 
-
     @Override
     public int getSize() {
         return size;
     }
 
     private Node<T> getNode(int index) {
-        if (isValidIndex(index)) {
-            Node<T> current;
-            if (index < size / 2) {
-                current = head;
-                for (int i = 0; i < index; i++) {
-                    current = current.next;
-                }
-            } else {
-                current = tail;
-                for (int i = size - 1; i > index; i--) {
-                    current = current.prev;
-                }
-            }
-            return current;
-        } else {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
-    }
 
+        Node<T> current;
+        if (index < size / 2) {
+            current = head;
+            for (int i = 0; i < index; i++) {
+                current = current.next;
+            }
+        } else {
+            current = tail;
+            for (int i = size - 1; i > index; i--) {
+                current = current.prev;
+            }
+        }
+        return current;
+    }
 
     private void removeNode(Node<T> node) {
         Node<T> prevNode = node.prev;
@@ -206,10 +205,6 @@ public class MyLinkedList<T> implements MyList<T> {
         }
 
         size--;
-    }
-
-    private boolean isValidIndex(int index) {
-        return index >= 0 && index < size;
     }
 
     @Override
@@ -248,11 +243,13 @@ public class MyLinkedList<T> implements MyList<T> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("[");
-        for (int i = 0; i < size; i++) {
-            builder.append(get(i));
-            if (i < size - 1) {
+        Node<T> current = head;
+        while (current != null) {
+            builder.append(current.data);
+            if (current.next != null) {
                 builder.append(", ");
             }
+            current = current.next;
         }
         builder.append("]");
         return builder.toString();

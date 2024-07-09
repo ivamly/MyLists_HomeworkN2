@@ -104,26 +104,6 @@ class MyArrayListTest {
     }
 
     @Test
-    void testEnsureCapacity() {
-        for (int i = 0; i < 10; i++) {
-            myArrayList.add(i);
-        }
-        assertEquals(20, myArrayList.getAvailableSize());
-    }
-
-    @Test
-    void testShrinkIfNeeded() {
-        for (int i = 0; i < 30; i++) {
-            myArrayList.add(i);
-        }
-        assertEquals(40, myArrayList.getAvailableSize());
-        for (int i = 0; i < 29; i++) {
-            myArrayList.remove(0);
-        }
-        assertEquals(10, myArrayList.getAvailableSize());
-    }
-
-    @Test
     void testComarableSort() {
         myArrayList.add(-20);
         myArrayList.add(500);

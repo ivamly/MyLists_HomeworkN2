@@ -6,33 +6,38 @@ import java.util.Comparator;
 import java.util.Objects;
 
 public class MyArrayList<T> implements MyList<T> {
-    private T[] array;
+    private Object[] array;
     private int size = 10;
     private int currentSize = 0;
 
-    @SuppressWarnings("unchecked")
     public MyArrayList() {
-        array = (T[]) new Object[size];
+        array = new Object[size];
     }
 
     public MyArrayList(MyList<? extends T> list) {
         this();
-        for (int i = 0; i < list.getSize(); i++) {
-            add(list.get(i));
+        if (list != null) {
+            for (int i = 0; i < list.getSize(); i++) {
+                add(list.get(i));
+            }
         }
     }
 
     public MyArrayList(Collection<? extends T> collection) {
         this();
-        for (T element : collection) {
-            add(element);
+        if (collection != null) {
+            for (T element : collection) {
+                add(element);
+            }
         }
     }
 
     public MyArrayList(T[] array) {
         this();
-        for (T element : array) {
-            add(element);
+        if (array != null) {
+            for (T element : array) {
+                add(element);
+            }
         }
     }
 
@@ -44,20 +49,23 @@ public class MyArrayList<T> implements MyList<T> {
 
     @Override
     public void add(int index, T element) {
-        if (isValidIndex(index)) {
-            ensureCapacity();
-            for (int i = currentSize; i > index; i--) {
-                array[i] = array[i - 1];
-            }
-            array[index] = element;
-            currentSize++;
-        } else {
+        if (isNotValidIndex(index)) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + currentSize);
         }
+
+        ensureCapacity();
+        System.arraycopy(array, index, array, index + 1, currentSize - index);
+        array[index] = element;
+        currentSize++;
     }
 
     @Override
     public void addAll(Collection<? extends T> c) {
+        if (c == null) {
+            throw new NullPointerException("Collection must be not null");
+        }
+
+        ensureCapacity(currentSize + c.size());
         for (T element : c) {
             add(element);
         }
@@ -65,6 +73,11 @@ public class MyArrayList<T> implements MyList<T> {
 
     @Override
     public void addAll(MyList<? extends T> c) {
+        if (c == null) {
+            throw new NullPointerException("Collection must be not null");
+        }
+
+        ensureCapacity(currentSize + c.getSize());
         for (int i = 0; i < c.getSize(); i++) {
             add(c.get(i));
         }
@@ -72,19 +85,21 @@ public class MyArrayList<T> implements MyList<T> {
 
     @Override
     public void remove(int index) {
-        if (isValidIndex(index)) {
-            for (int i = index; i < currentSize - 1; i++) {
-                array[i] = array[i + 1];
-            }
-            array[--currentSize] = null;
-            shrinkIfNeeded();
-        } else {
+        if (isNotValidIndex(index)) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + currentSize);
         }
+
+        System.arraycopy(array, index + 1, array, index, currentSize - index - 1);
+        array[--currentSize] = null;
+        shrinkIfNeeded();
     }
 
     @Override
     public void remove(T element) {
+        if (element == null) {
+            throw new NullPointerException("Element must be not null");
+        }
+
         for (int i = 0; i < currentSize; i++) {
             if (element.equals(array[i])) {
                 remove(i);
@@ -93,24 +108,26 @@ public class MyArrayList<T> implements MyList<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T get(int index) {
-        if (isValidIndex(index)) {
-            return array[index];
-        } else {
+        if (isNotValidIndex(index)) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + currentSize);
         }
+
+        return (T) array[index];
     }
 
     @Override
     public void set(int index, T element) {
-        if (isValidIndex(index)) {
-            array[index] = element;
-        } else {
+        if (isNotValidIndex(index)) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + currentSize);
         }
+
+        array[index] = element;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void sort(Comparator<? super T> comparator) {
         if (currentSize < 2) {
@@ -122,8 +139,8 @@ public class MyArrayList<T> implements MyList<T> {
         do {
             wasSwap = false;
             for (int i = 0; i < currentSize - 1; i++) {
-                if (comparator.compare(array[i], array[i + 1]) > 0) {
-                    T temp = array[i];
+                if (comparator.compare((T) array[i], (T) array[i + 1]) > 0) {
+                    T temp = (T) array[i];
                     array[i] = array[i + 1];
                     array[i + 1] = temp;
                     wasSwap = true;
@@ -132,45 +149,34 @@ public class MyArrayList<T> implements MyList<T> {
         } while (wasSwap);
     }
 
-
     @Override
     public int getSize() {
         return currentSize;
     }
 
-    // Метод сделан публичным, для того чтобы протестировать увеличение и уменьшение размера массива
-    public int getAvailableSize() {
-        return size;
-    }
-
-    @SuppressWarnings("unchecked")
     private void ensureCapacity() {
         if (currentSize >= size) {
             size *= 2;
-            T[] newArray = (T[]) new Object[size];
-            myArrayCopy(array, 0, newArray, 0, currentSize);
-            array = newArray;
+            array = Arrays.copyOf(array, size);
         }
     }
 
-    @SuppressWarnings("unchecked")
+    private void ensureCapacity(int minCapacity) {
+        if (minCapacity > size) {
+            size = Math.max(size * 2, minCapacity);
+            array = Arrays.copyOf(array, size);
+        }
+    }
+
     private void shrinkIfNeeded() {
         if (currentSize < size / 3 && size > 10) {
             size /= 2;
-            T[] newArray = (T[]) new Object[size];
-            myArrayCopy(array, 0, newArray, 0, currentSize);
-            array = newArray;
+            array = Arrays.copyOf(array, size);
         }
     }
 
-    private void myArrayCopy(T[] src, int srcPos, T[] dest, int destPos, int length) {
-        for (int i = 0; i < length; i++) {
-            dest[destPos + i] = src[srcPos + i];
-        }
-    }
-
-    private boolean isValidIndex(int index) {
-        return index >= 0 && index < currentSize;
+    private boolean isNotValidIndex(int index) {
+        return index < 0 || index >= currentSize;
     }
 
     @Override
