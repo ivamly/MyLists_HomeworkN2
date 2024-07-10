@@ -8,7 +8,7 @@ public class MyLinkedList<T> implements MyList<T> {
 
     private Node<T> head;
     private Node<T> tail;
-    private int size;
+    private int capacity;
 
     private static class Node<T> {
         T data;
@@ -25,34 +25,22 @@ public class MyLinkedList<T> implements MyList<T> {
     public MyLinkedList() {
         head = null;
         tail = null;
-        size = 0;
+        capacity = 0;
     }
 
     public MyLinkedList(MyList<T> myList) {
         this();
-        if (myList != null) {
-            for (int i = 0; i < myList.getSize(); i++) {
-                add(myList.get(i));
-            }
-        }
+        addAll(myList);
     }
 
     public MyLinkedList(Collection<? extends T> collection) {
         this();
-        if (collection != null) {
-            for (T element : collection) {
-                add(element);
-            }
-        }
+        addAll(collection);
     }
 
     public MyLinkedList(T[] array) {
         this();
-        if (array != null) {
-            for (T element : array) {
-                add(element);
-            }
-        }
+        addAll(array);
     }
 
     @Override
@@ -64,16 +52,16 @@ public class MyLinkedList<T> implements MyList<T> {
             tail.next = newNode;
         }
         tail = newNode;
-        size++;
+        capacity++;
     }
 
     @Override
     public void add(int index, T element) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        if (index < 0 || index > capacity) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + capacity);
         }
 
-        if (index == size) {
+        if (index == capacity) {
             add(element);
             return;
         }
@@ -87,31 +75,13 @@ public class MyLinkedList<T> implements MyList<T> {
         } else {
             prevNode.next = newNode;
         }
-        size++;
-    }
-
-    @Override
-    public void addAll(Collection<? extends T> c) {
-        if (c != null) {
-            for (T element : c) {
-                add(element);
-            }
-        }
-    }
-
-    @Override
-    public void addAll(MyList<? extends T> c) {
-        if (c != null) {
-            for (int i = 0; i < c.getSize(); i++) {
-                add(c.get(i));
-            }
-        }
+        capacity++;
     }
 
     @Override
     public void remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        if (index < 0 || index >= capacity) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + capacity);
         }
 
         Node<T> nodeToRemove = getNode(index);
@@ -143,7 +113,7 @@ public class MyLinkedList<T> implements MyList<T> {
 
     @Override
     public void sort(Comparator<? super T> comparator) {
-        if (size < 2) {
+        if (capacity < 2) {
             return;
         }
 
@@ -164,24 +134,24 @@ public class MyLinkedList<T> implements MyList<T> {
     }
 
     @Override
-    public int getSize() {
-        return size;
+    public int getCapacity() {
+        return capacity;
     }
 
     private Node<T> getNode(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        if (index < 0 || index >= capacity) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + capacity);
         }
 
         Node<T> current;
-        if (index < size / 2) {
+        if (index < capacity / 2) {
             current = head;
             for (int i = 0; i < index; i++) {
                 current = current.next;
             }
         } else {
             current = tail;
-            for (int i = size - 1; i > index; i--) {
+            for (int i = capacity - 1; i > index; i--) {
                 current = current.prev;
             }
         }
@@ -204,7 +174,7 @@ public class MyLinkedList<T> implements MyList<T> {
             tail = prevNode;
         }
 
-        size--;
+        capacity--;
     }
 
     @Override
@@ -212,7 +182,7 @@ public class MyLinkedList<T> implements MyList<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MyLinkedList<?> that = (MyLinkedList<?>) o;
-        if (size != that.size) return false;
+        if (capacity != that.capacity) return false;
 
         Node<T> currentThis = head;
         Node<?> currentThat = that.head;
@@ -230,7 +200,7 @@ public class MyLinkedList<T> implements MyList<T> {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(size);
+        int result = Objects.hash(capacity);
         Node<T> current = head;
         while (current != null) {
             result = 31 * result + Objects.hashCode(current.data);

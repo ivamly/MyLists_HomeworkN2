@@ -1,8 +1,8 @@
 package com.ivmaly;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Arrays;
 
 public class ExampleUsage {
     public static void main(String[] args) {
@@ -53,7 +53,7 @@ public class ExampleUsage {
     private static void setDemo(MyList<Integer> myList) {
         System.out.println("\nDemonstrating set method");
         System.out.println(myList);
-        myList.set(myList.getSize() - 1, 1000);
+        myList.set(myList.getCapacity() - 1, 1000);
         System.out.println("Setting the last element value to 1000:");
         System.out.println(myList);
     }
@@ -96,5 +96,12 @@ public class ExampleUsage {
         myList.sort(Comparator.reverseOrder());
         System.out.println("List after sorting in reverse order:");
         System.out.println(myList);
+    }
+
+    private static String nullTets(String[] arr) {
+        for (String s : arr) {
+            System.out.println(s);
+        }
+        return " ";
     }
 }

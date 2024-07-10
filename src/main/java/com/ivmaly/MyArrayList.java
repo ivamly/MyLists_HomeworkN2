@@ -7,38 +7,26 @@ import java.util.Objects;
 
 public class MyArrayList<T> implements MyList<T> {
     private Object[] array;
-    private int size = 10;
+    private int capacity = 10;
     private int currentSize = 0;
 
     public MyArrayList() {
-        array = new Object[size];
+        array = new Object[capacity];
     }
 
     public MyArrayList(MyList<? extends T> list) {
         this();
-        if (list != null) {
-            for (int i = 0; i < list.getSize(); i++) {
-                add(list.get(i));
-            }
-        }
+        addAll(list);
     }
 
     public MyArrayList(Collection<? extends T> collection) {
         this();
-        if (collection != null) {
-            for (T element : collection) {
-                add(element);
-            }
-        }
+        addAll(collection);
     }
 
     public MyArrayList(T[] array) {
         this();
-        if (array != null) {
-            for (T element : array) {
-                add(element);
-            }
-        }
+        addAll(array);
     }
 
     @Override
@@ -57,30 +45,6 @@ public class MyArrayList<T> implements MyList<T> {
         System.arraycopy(array, index, array, index + 1, currentSize - index);
         array[index] = element;
         currentSize++;
-    }
-
-    @Override
-    public void addAll(Collection<? extends T> c) {
-        if (c == null) {
-            throw new NullPointerException("Collection must be not null");
-        }
-
-        ensureCapacity(currentSize + c.size());
-        for (T element : c) {
-            add(element);
-        }
-    }
-
-    @Override
-    public void addAll(MyList<? extends T> c) {
-        if (c == null) {
-            throw new NullPointerException("Collection must be not null");
-        }
-
-        ensureCapacity(currentSize + c.getSize());
-        for (int i = 0; i < c.getSize(); i++) {
-            add(c.get(i));
-        }
     }
 
     @Override
@@ -150,28 +114,21 @@ public class MyArrayList<T> implements MyList<T> {
     }
 
     @Override
-    public int getSize() {
+    public int getCapacity() {
         return currentSize;
     }
 
     private void ensureCapacity() {
-        if (currentSize >= size) {
-            size *= 2;
-            array = Arrays.copyOf(array, size);
-        }
-    }
-
-    private void ensureCapacity(int minCapacity) {
-        if (minCapacity > size) {
-            size = Math.max(size * 2, minCapacity);
-            array = Arrays.copyOf(array, size);
+        if (currentSize >= capacity) {
+            capacity *= 2;
+            array = Arrays.copyOf(array, capacity);
         }
     }
 
     private void shrinkIfNeeded() {
-        if (currentSize < size / 3 && size > 10) {
-            size /= 2;
-            array = Arrays.copyOf(array, size);
+        if (currentSize < capacity / 3 && capacity > 10) {
+            capacity /= 2;
+            array = Arrays.copyOf(array, capacity);
         }
     }
 
@@ -184,12 +141,12 @@ public class MyArrayList<T> implements MyList<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MyArrayList<?> that = (MyArrayList<?>) o;
-        return size == that.size && currentSize == that.currentSize && Objects.deepEquals(array, that.array);
+        return capacity == that.capacity && currentSize == that.currentSize && Objects.deepEquals(array, that.array);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.hashCode(array), size, currentSize);
+        return Objects.hash(Arrays.hashCode(array), capacity, currentSize);
     }
 
     @Override

@@ -25,7 +25,7 @@ class MyArrayListTest {
     @Test
     void testConstructorWithMyList() {
         MyArrayList<Integer> list = new MyArrayList<>(myArrayList);
-        assertEquals(3, list.getSize());
+        assertEquals(3, list.getCapacity());
         assertEquals(1, list.get(0));
         assertEquals(2, list.get(1));
         assertEquals(3, list.get(2));
@@ -35,7 +35,7 @@ class MyArrayListTest {
     void testConstructorWithCollection() {
         List<Integer> collection = Arrays.asList(4, 5, 6);
         MyArrayList<Integer> list = new MyArrayList<>(collection);
-        assertEquals(3, list.getSize());
+        assertEquals(3, list.getCapacity());
         assertEquals(4, list.get(0));
         assertEquals(5, list.get(1));
         assertEquals(6, list.get(2));
@@ -74,7 +74,7 @@ class MyArrayListTest {
         collection.add(5);
         collection.add(6);
         myArrayList.addAll(collection);
-        assertEquals(6, myArrayList.getSize());
+        assertEquals(6, myArrayList.getCapacity());
         assertEquals(6, myArrayList.get(5));
     }
 
@@ -82,7 +82,7 @@ class MyArrayListTest {
     void testAddAllMyCollection() {
         MyArrayList<Integer> myCollection = new MyArrayList<>(myArrayList);
         myArrayList.addAll(myCollection);
-        assertEquals(6, myArrayList.getSize());
+        assertEquals(6, myArrayList.getCapacity());
         assertEquals(3, myArrayList.get(5));
     }
 

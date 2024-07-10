@@ -24,7 +24,7 @@ class MyLinkedListTest {
         MyLinkedList<Integer> list = new MyLinkedList<>(myLinkedList);
 
         // Проверяем, что элементы были корректно скопированы
-        assertEquals(3, list.getSize());
+        assertEquals(3, list.getCapacity());
         assertEquals(1, list.get(0));
         assertEquals(2, list.get(1));
         assertEquals(3, list.get(2));
@@ -36,7 +36,7 @@ class MyLinkedListTest {
         MyLinkedList<Integer> list = new MyLinkedList<>(collection);
 
         // Проверяем, что элементы были корректно добавлены
-        assertEquals(3, list.getSize());
+        assertEquals(3, list.getCapacity());
         assertEquals(4, list.get(0));
         assertEquals(5, list.get(1));
         assertEquals(6, list.get(2));
@@ -45,7 +45,7 @@ class MyLinkedListTest {
     @Test
     void testAdd() {
         myLinkedList.add(4);
-        assertEquals(4, myLinkedList.get(myLinkedList.getSize() - 1));
+        assertEquals(4, myLinkedList.get(myLinkedList.getCapacity() - 1));
     }
 
     @Test
@@ -62,7 +62,7 @@ class MyLinkedListTest {
         collection.add(5);
         collection.add(6);
         myLinkedList.addAll(collection);
-        assertEquals(6, myLinkedList.getSize());
+        assertEquals(6, myLinkedList.getCapacity());
         assertEquals(6, myLinkedList.get(5));
     }
 
@@ -73,7 +73,7 @@ class MyLinkedListTest {
         myCollection.add(2);
         myCollection.add(3);
         myLinkedList.addAll(myCollection);
-        assertEquals(6, myLinkedList.getSize());
+        assertEquals(6, myLinkedList.getCapacity());
         assertEquals(3, myLinkedList.get(5));
     }
 
@@ -104,11 +104,11 @@ class MyLinkedListTest {
 
     @Test
     void testSize() {
-        assertEquals(3, myLinkedList.getSize());
+        assertEquals(3, myLinkedList.getCapacity());
         myLinkedList.add(4);
-        assertEquals(4, myLinkedList.getSize());
+        assertEquals(4, myLinkedList.getCapacity());
         myLinkedList.remove(0);
-        assertEquals(3, myLinkedList.getSize());
+        assertEquals(3, myLinkedList.getCapacity());
     }
 
     @Test
