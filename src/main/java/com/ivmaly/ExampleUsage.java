@@ -97,11 +97,4 @@ public class ExampleUsage {
         System.out.println("List after sorting in reverse order:");
         System.out.println(myList);
     }
-
-    private static String nullTets(String[] arr) {
-        for (String s : arr) {
-            System.out.println(s);
-        }
-        return " ";
-    }
 }
